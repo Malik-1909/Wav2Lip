@@ -158,11 +158,13 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print('Using {} for inference.'.format(device))
 
 def _load(checkpoint_path):
+	load_kwargs = {'weights_only': False}
 	if device == 'cuda':
-		checkpoint = torch.load(checkpoint_path)
+		checkpoint = torch.load(checkpoint_path, **load_kwargs)
 	else:
 		checkpoint = torch.load(checkpoint_path,
-								map_location=lambda storage, loc: storage)
+								map_location=lambda storage, loc: storage,
+								**load_kwargs)
 	return checkpoint
 
 def load_model(path):
@@ -202,7 +204,7 @@ def main():
 				frame = cv2.resize(frame, (frame.shape[1]//args.resize_factor, frame.shape[0]//args.resize_factor))
 
 			if args.rotate:
-				frame = cv2.rotate(frame, cv2.cv2.ROTATE_90_CLOCKWISE)
+				frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
 
 			y1, y2, x1, x2 = args.crop
 			if x2 == -1: x2 = frame.shape[1]
